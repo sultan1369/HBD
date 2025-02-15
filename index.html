@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Great Vibes', cursive;
+            color: #fff;
+            text-align: center;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+        h1 {
+            margin-top: 50px;
+            font-size: 4em;
+            color: #82ecff;
+            text-shadow: 0 0 10px #d1f3ff, 0 0 20px #ffffff;
+            animation: flicker 2s infinite;
+        }
+
+        footer {
+            margin-top: 50px;
+            font-size: 2em;
+            color: #FFB6C1;
+            text-shadow: 0 0 10px #FF69B4, 0 0 20px #FF1493;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 10px #bcfffd, 0 0 20px #beecff;
+            }
+            20%, 24%, 55% {
+                text-shadow: 0 0 5px #ffffff, 0 0 10px #c6f6ff;
+            }
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px white;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        .message {
+            display: none;
+            font-size: 1.5em;
+            line-height: 1.8;
+            color: #FFDAB9;
+        }
+
+        #countdown {
+            margin: 20px 0;
+            font-size: 2em;
+            color: #ADFF2F;
+            text-shadow: 0 0 10px #32CD32, 0 0 20px #008000;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="birthdayHeading">Advance Happy Birthday, My Love! &hearts;</h1>
+
+    <div id="countdown"></div>
+
+    <div class="message" id="messageBox">
+        <p>On this special day, I want to tell you how much you mean to me.</p>
+        <p>You are my everything, and I am so grateful to have you in my life.</p>
+        <p>May your day be filled with love, joy, and all the things that make you happy.</p>
+        <p>Your love is the light that guides me through even the darkest days.</p>
+        <p>I love you more than words can express.</p>
+        <p>Forever yours,</p>
+        <p>- Kanna</p>
+    </div>
+
+    <canvas id="fireworksCanvas"></canvas>
+
+    <script>
+        // Countdown Timer
+        const countdownElement = document.getElementById('countdown');
+        const birthdayHeading = document.getElementById('birthdayHeading');
+        const messageBox = document.getElementById('messageBox');
+
+        const endDate = new Date('February 19, 2025 00:00:00');
+
+        endDate.setHours(endDate.getHours() + 24); // Set to 24 hours from now
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = endDate - now;
+
+            if (diff <= 0) {
+                countdownElement.textContent = "The Day Was Started";
+                clearInterval(countdownInterval);
+
+                // Show the message and update the heading
+                birthdayHeading.textContent = "Happy Birthday, My Love!";
+                birthdayHeading.style.color = "#ff0000";
+                messageBox.style.display = "block";
+
+                document.body.style.background = 'linear-gradient(to bottom, #0000FF, #FFC0CB)';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            countdownElement.textContent = `Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Create stars
+        function createStars() {
+            const starCount = 100;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement("div");
+                star.classList.add("star");
+                star.style.top = `${Math.random() * window.innerHeight}px`;
+                star.style.left = `${Math.random() * window.innerWidth}px`;
+                document.body.appendChild(star);
+            }
+        }
+
+        createStars();
+
+        window.addEventListener("resize", () => {
+            document.querySelectorAll(".star").forEach(star => star.remove());
+            createStars();
+        });
+
+        // Fireworks
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 2 + 1;
+                this.speed = Math.random() * 2 + 1;
+                this.angle = Math.random() * 2 * Math.PI;
+                this.opacity = 1;
+                this.fade = Math.random() * 0.03 + 0.01;
+            }
+
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.opacity -= this.fade;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        class Fireworks {
+            constructor() {
+                this.fireworks = [];
+            }
+
+            create(x, y) {
+                const colors = [
+                    { r: 255, g: 99, b: 71 },
+                    { r: 135, g: 206, b: 250 },
+                    { r: 255, g: 215, b: 0 },
+                    { r: 144, g: 238, b: 144 },
+                ];
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                for (let i = 0; i < 100; i++) {
+                    this.fireworks.push(new Firework(x, y, color));
+                }
+            }
+
+            update() {
+                this.fireworks.forEach((firework, index) => {
+                    firework.update();
+                    if (firework.opacity <= 0) this.fireworks.splice(index, 1);
+                });
+            }
+
+            draw() {
+                this.fireworks.forEach((firework) => firework.draw());
+            }
+        }
+
+        const fireworks = new Fireworks();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            fireworks.update();
+            fireworks.draw();
+            requestAnimationFrame(animate);
+        }
+
+        function autoFireworks() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            fireworks.create(x, y);
+        }
+
+        setInterval(autoFireworks, 1000);
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
